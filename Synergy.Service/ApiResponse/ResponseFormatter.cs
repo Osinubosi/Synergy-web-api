@@ -5,9 +5,10 @@ using System.Text;
 
 namespace Synergy.Service.ApiResponse
 {
-  public class ResponseFormatter<T> where T : class
+  public class Response<T> where T : class
     {
         public SuccessResponse<T> SuccessData { get; set; }
+        public ResponseStatus Status { get; set; }
         public ErrorResponse<T> ErrorData { get; set; }
        
     }

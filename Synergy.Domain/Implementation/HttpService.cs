@@ -40,10 +40,8 @@ namespace Synergy.Domain.Implementation
                 client.BaseAddress = new Uri(baseUrl);
                 if (headers != null)
                 {
-                    headers.ForEach(h =>
-                    {
-                        client.DefaultRequestHeaders.Add(h.Key, h.Value);
-                    });
+                    // ReSharper disable once AccessToDisposedClosure
+                    headers.ForEach(h => { client.DefaultRequestHeaders.Add(h.Key, h.Value); });
 
                 }
                 var request = await client.GetAsync(referenceUrl);
@@ -89,11 +87,8 @@ namespace Synergy.Domain.Implementation
             {
                 StringContent content;
                 client.BaseAddress = new Uri(baseUrl);
-                if (headers != null)
-                    headers.ForEach(h =>
-                    {
-                        client.DefaultRequestHeaders.Add(h.Key, h.Value);
-                    });
+                // ReSharper disable once AccessToDisposedClosure
+                headers?.ForEach(h => { client.DefaultRequestHeaders.Add(h.Key, h.Value); });
 
 
                 // client.DefaultRequestHeaders.Add("AppId", Constants.SwitchAppId);
@@ -123,6 +118,7 @@ namespace Synergy.Domain.Implementation
                 {
                     headers.ForEach(h =>
                     {
+                        // ReSharper disable once AccessToDisposedClosure
                         client.DefaultRequestHeaders.Add(h.Key, h.Value);
                     });
                 }
@@ -147,10 +143,8 @@ namespace Synergy.Domain.Implementation
                 client.BaseAddress = new Uri(baseUrl);
                 if (!string.IsNullOrEmpty(authorizationToken))
                     client.DefaultRequestHeaders.Add("Authorization", $"{authenticationScheme} {authorizationToken}");
-                headers.ForEach(h =>
-                {
-                    client.DefaultRequestHeaders.Add(h.Key, h.Value);
-                });
+                // ReSharper disable once AccessToDisposedClosure
+                headers.ForEach(h => { client.DefaultRequestHeaders.Add(h.Key, h.Value); });
 
                 var requestMessage = new HttpRequestMessage(httpMethod, referenceUrl);
 

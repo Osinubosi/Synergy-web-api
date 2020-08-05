@@ -5,7 +5,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200608083208_client-requestlog-responselog.cs" />
+    <Compile Remove="Migrations\20200608083208_client-requestlog-responselog.Designer.cs" />
+    <Compile Remove="Migrations\20200608083548_client-requestlog-responselog.cs" />
+    <Compile Remove="Migrations\20200608083548_client-requestlog-responselog.Designer.cs" />
+    <Compile Remove="Migrations\20200608085509_client-requestlog-responselog.cs" />
+    <Compile Remove="Migrations\20200608085509_client-requestlog-responselog.Designer.cs" />
+    <Compile Remove="Migrations\20200727094652_add-primaryKey.cs" />
+    <Compile Remove="Migrations\20200727094652_add-primaryKey.Designer.cs" />
+    <Compile Remove="Migrations\20200727100709_remove-country.cs" />
+    <Compile Remove="Migrations\20200727100709_remove-country.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
     <PackageReference Include="NLog" Version="4.7.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Implementations\" />
   </ItemGroup>
 
 </Project>

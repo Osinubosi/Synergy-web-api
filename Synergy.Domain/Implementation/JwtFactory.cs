@@ -3,11 +3,9 @@ using Synergy.Domain.Constants;
 using Synergy.Domain.Interfaces;
 using Synergy.Domain.ServiceModel;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Synergy.Domain.Implementation
@@ -58,6 +56,7 @@ namespace Synergy.Domain.Implementation
                               new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero))
                              .TotalSeconds);
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private static void ThrowIfInvalidOptions(JwtIssuerOptions options)
         {
             if (options == null) throw new ArgumentNullException(nameof(options));

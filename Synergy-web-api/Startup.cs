@@ -1,35 +1,40 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Synergy.Domain.Constants;
+using Synergy.Domain.Implementation;
+using Synergy.Domain.Interfaces;
 using Synergy.Domain.ServiceModel;
+using Synergy.Repository.Database;
+using Synergy.Repository.Interfaces;
+using Synergy.Service.Implementations;
+using Synergy.Service.Interfaces;
+using Synergy_web_api.WebHandler;
 
 namespace Synergy_web_api
 {
     public class Startup
     {
-        private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRjEKOBL";
+        private const string SECRET_KEY = "iNivDmHLpUA223sqsfhqGbMRdRjEKOBL";
 
-        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-        public Startup(IConfiguration configuration)
+        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SECRET_KEY));
+        private readonly IHostEnvironment _env;
+        public Startup(IConfiguration configuration,IHostEnvironment evn)
         {
             Configuration = configuration;
+            _env = evn;
         }
 
         public IConfiguration Configuration { get; }
@@ -38,14 +43,26 @@ namespace Synergy_web_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            DatabaseContext(services);
 
             ApiBehaviour(services);
 
             ConfigureSwagger(services);
             AuthorizationService(services);
 
+
+            services.AddSingleton(Configuration);
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<EmailConfigurationProvider>(Configuration.GetSection("EmailConfigurationProvider"));
             services.AddMemoryCache();
+            services.AddScoped<IDbContext, SynergyDbContext>();
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IOnboardingService, OnboardingService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<ISynergySettings, SynergySettings>();
+            services.AddTransient<ICryptographyService, CryptographyService>();
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IHttpService, HttpService>();
 
             services.AddCors(options =>
             {
@@ -59,6 +76,18 @@ namespace Synergy_web_api
                                 .WithExposedHeaders("Authorization", "WWW-Authenticate", "X-Pagination");
                         });
             });
+        }
+
+        private void DatabaseContext(IServiceCollection services)
+        {
+            if (_env.IsDevelopment())
+                services.AddDbContext<SynergyDbContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("SynergyDbConnection")));
+            if (_env.IsProduction())
+                services.AddDbContext<SynergyDbContext>(options =>
+              options.UseSqlServer(Configuration.GetConnectionString("SynergyDbConnectionProduction")));
+
+            services.AddSingleton<IJwtFactory, JwtFactory>();
         }
 
         private void AuthorizationService(IServiceCollection services)
@@ -77,6 +106,7 @@ namespace Synergy_web_api
                 options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
             });
 
+           
 
             var tokenVaidationParameters = new TokenValidationParameters
             {
@@ -104,6 +134,8 @@ namespace Synergy_web_api
                 configureOptions.TokenValidationParameters = tokenVaidationParameters;
                 configureOptions.SaveToken = true;
             });
+
+
         }
 
         private static void ApiBehaviour(IServiceCollection services)
@@ -112,6 +144,7 @@ namespace Synergy_web_api
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+          
         }
 
         private static void ConfigureSwagger(IServiceCollection services)

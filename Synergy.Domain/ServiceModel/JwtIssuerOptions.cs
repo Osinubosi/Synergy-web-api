@@ -1,12 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Synergy.Domain.ServiceModel
 {
-   public class JwtIssuerOptions
+    public class JwtIssuerOptions
     {
         /// <summary>
         /// 4.1.1.  "iss" (Issuer) Claim - The "iss" (issuer) claim identifies the principal that issued the JWT.
